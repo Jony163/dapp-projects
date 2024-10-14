@@ -31,6 +31,4 @@ contract TokenBank {
         require(success, "transfer firled");
         emit Withdraw(msg.sender, amount);
     }
-
-    receive() external payable {}
 }

@@ -47,30 +47,42 @@ contract NFTMarker{
     }
 
     // tokensReceived 方法中购买 nft
-    function tokensReceiverd(address buyer, uint256 amount, uint256 tokenId) public{
-        Listing memory listing = listings[tokenId];
-        require(amount == listing.price, "Incorrect token amount");
-
-        //从买家转移到买家
-        require(tokenContract.transferFrom(buyer, listing.seller, listing.price), "Token transfer failed");
-
-        //从NFT市场转移到买家
-        nftContract.transferFrom(address(this), buyer, tokenId);
-
-        //清除上架信息
-        delete listings[tokenId];
-        
-        emit NFTPurchased(tokenId, listing.price, buyer);
-    }
-
+   
     //购买功能
     function buyNFT(uint256 tokenId) external {
         Listing memory listing = listings[tokenId];
         require(listing.price > 0, "NFT not listed for sale");
 
-        // 通过 扩展的 tokensReceived 方法进行购买
-        tokensReceiverd(msg.sender, listing.price, tokenId);
+         //从买家转移到卖家，将所需的付款令牌从买方转移到卖方
+        require(tokenContract.transferFrom(msg.sender, listing.seller, listing.price), "Token transfer failed");
 
+        //从NFT市场转移到买家
+        nftContract.transferFrom(address(this), msg.sender, tokenId);
+
+        //清除上架信息
+        delete listings[tokenId];
+        
+        emit NFTPurchased(tokenId, listing.price, msg.sender);
+    }
+
+     function tokensReceiverd(address from, uint256 amount, bytes calldata userdata) external returns (bool){
+        require(msg.sender == tokenContract, "Only the ERC20 token contract can call this");
+        uint256 tokenId = abi.decode(userdata,(uint256));
+        Listing memory listing = listings[tokenId];
+        require(amount == listing.price, "Incorrect token amount");
+
+        //将代币转给卖家
+        require(tokenContract.transfer(listing.seller, amount), "Token transfer failed");
+
+        //把NFT转给买家
+        nftContract.transferFrom(address(this), from, tokenId);
+
+        //清除上架信息
+        delete listings[tokenId];
+        
+        emit NFTPurchased(tokenId, listing.price, from);
+
+        return true;
     }
 }
 
@@ -80,9 +92,15 @@ contract MyToken is ERC20{
     }
 
     // tokensReceived 实现，用于触发 NFT 购买逻辑
-    function tokensReceived(address nftaddress, uint256 tokenId) external {
-        // Token 接收逻辑由 NFTMarket 合约完成
-        NFTMarker nft = NFTMarker(nftaddress);
-        nft.buyNFT(tokenId);
+    function transferWithCallback(address to, uint256 amount, bytes memory userdata) public returns (bool){
+        bool success = transfer(to, amount);
+        require(success, unicode"ExtendedERC20: 转账失败");
+
+        // 如果 `to` 是合约地址，则调用其 `tokensReceived` 方法
+        if (isContract(to)) {
+            (bool success, ) = ITokensReceived(to).tokensReceived(msg.sender, amount, userdata);
+            require(success, "tokensReceived call failed");
+        }
+        return true;
     }
 }

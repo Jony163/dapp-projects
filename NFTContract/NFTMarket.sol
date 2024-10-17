@@ -91,12 +91,10 @@ contract MyToken is ERC20{
         _mint(msg.sender, 1000000 * 10 ** decimals()); // 铸造 100 万个 Token
     }
 
-    // tokensReceived 实现，用于触发 NFT 购买逻辑
     function transferWithCallback(address to, uint256 amount, bytes memory userdata) public returns (bool){
         bool success = transfer(to, amount);
-        require(success, unicode"ExtendedERC20: 转账失败");
+        require(success, "ExtendedERC20: transfer firled");
 
-        // 如果 `to` 是合约地址，则调用其 `tokensReceived` 方法
         if (isContract(to)) {
             (bool success, ) = ITokensReceived(to).tokensReceived(msg.sender, amount, userdata);
             require(success, "tokensReceived call failed");

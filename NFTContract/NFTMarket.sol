@@ -65,7 +65,7 @@ contract NFTMarker{
         emit NFTPurchased(tokenId, listing.price, msg.sender);
     }
 
-     function tokensReceiverd(address from, uint256 amount, bytes calldata userdata) external returns (bool){
+     function tokensReceived(address from, uint256 amount, bytes calldata userdata) external returns (bool){
         require(msg.sender == tokenContract, "Only the ERC20 token contract can call this");
         uint256 tokenId = abi.decode(userdata,(uint256));
         Listing memory listing = listings[tokenId];

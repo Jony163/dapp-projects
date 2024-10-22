@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Wallet with Web3Modal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <button id="connectWallet">Connect Wallet</button>
+        <div id="walletAddress"></div>
+        <button id="disconnectWallet" style="display: none;">Disconnect</button>
+    </div>
+
+    <!-- 引入 Web3Modal 和 Ethers.js -->
+    <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
+    <script src="https://unpkg.com/web3modal"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/ethers/dist/ethers.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
+    
+
+    <!-- 自定义 JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>

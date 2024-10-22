@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#walletAddress {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #333;
+}
+
+#disconnectWallet {
+    margin-top: 10px;
+    background-color: #dc3545;
+}
+
+#disconnectWallet:hover {
+    background-color: #c82333;
+}

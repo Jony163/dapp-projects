@@ -31,7 +31,7 @@ contract NFTMarket {
         listings[tokenId] = Listing({seller: msg.sender, price: price});
     }
 
-    function buyNFT(uint256 tokenId) external {
+    function buyNFT(uint256 tokenId) public {
         Listing memory listing = listings[tokenId];
         require(listing.price > 0, "NFT not for sale");
 
@@ -42,6 +42,8 @@ contract NFTMarket {
     }
 
     function permitBuy(
+        address owner,
+        address spender,
         uint256 tokenId,
         uint256 price,
         uint256 deadline,
@@ -55,24 +57,20 @@ contract NFTMarket {
         // 构建用于验证白名单的结构哈希
         bytes32 structHash = keccak256(
             abi.encode(
-                keccak256("Permit(address buyer,uint256 tokenId,uint256 price,uint256 deadline)"),
-                msg.sender,
+                keccak256("Permit(address owner,address spender,uint256 tokenId,uint256 price,uint256 deadline)"),
+                owner,
+                spender,
                 tokenId,
                 price,
                 deadline
             )
-        );
+        ); 
 
-        address digest = ecrecover(structHash, v, r, s);
+        address signer = ECDSA.recover(structHash, v, r, s);
 
-        // 验证签名是否由管理员签发
-        require(digest == admin, "Invalid whitelist signature");
+        // 从签名和消息计算 signer，并验证签名
+        require(signer == owner, "Invalid whitelist signature");
 
-        Listing memory listing = listings[tokenId];
-        
-        require(token.transferFrom(msg.sender, listing.seller, price), "Token transfer failed");
-        nft.safeTransferFrom(address(this), msg.sender, tokenId);
-
-        delete listings[tokenId];
+        buyNFT(tokenId);
     }
 }

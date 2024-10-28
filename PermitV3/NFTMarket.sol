@@ -4,12 +4,13 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./MyToken.sol";
+import "./MyNFT.sol";
 
 contract NFTMarket {
     using ECDSA for bytes32;
 
     MyToken public token;
-    ERC721 public nft;
+    MyNFT public nft;
     address public admin;
 
     struct Listing {
@@ -19,7 +20,7 @@ contract NFTMarket {
 
     mapping(uint256 => Listing) public listings;
 
-    constructor(MyToken _token, ERC721 _nft) {
+    constructor(MyToken _token, MyNFT _nft) {
         token = _token;
         nft = _nft;
         admin = msg.sender;
@@ -42,8 +43,7 @@ contract NFTMarket {
     }
 
     function permitBuy(
-        address owner,
-        address spender,
+        address buyer,
         uint256 tokenId,
         uint256 price,
         uint256 deadline,
@@ -57,9 +57,8 @@ contract NFTMarket {
         // 构建用于验证白名单的结构哈希
         bytes32 structHash = keccak256(
             abi.encode(
-                keccak256("Permit(address owner,address spender,uint256 tokenId,uint256 price,uint256 deadline)"),
-                owner,
-                spender,
+                keccak256("Permit(address buyer,uint256 tokenId,uint256 price,uint256 deadline)"),
+                buyer,
                 tokenId,
                 price,
                 deadline
@@ -69,7 +68,7 @@ contract NFTMarket {
         address signer = ECDSA.recover(structHash, v, r, s);
 
         // 从签名和消息计算 signer，并验证签名
-        require(signer == owner, "Invalid whitelist signature");
+        require(signer == admin, "Invalid whitelist signature");
 
         buyNFT(tokenId);
     }

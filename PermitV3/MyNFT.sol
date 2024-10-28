@@ -9,13 +9,13 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MyNFT is ERC721{
-    uint256 public nextTokenId;
+    // uint256 public nextTokenId;
 
     constructor() ERC721("Jony", "JNFT"){}
 
-    function mint(address to) external{
+    function mint(address to, uint256 nextTokenId) external{
         _safeMint(to, nextTokenId);
-        nextTokenId++;
+        // nextTokenId++;
     }
     
 }

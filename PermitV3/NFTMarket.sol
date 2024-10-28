@@ -11,7 +11,6 @@ contract NFTMarket {
 
     MyToken public token;
     MyNFT public nft;
-    address public admin;
 
     struct Listing {
         address seller;
@@ -23,7 +22,6 @@ contract NFTMarket {
     constructor(MyToken _token, MyNFT _nft) {
         token = _token;
         nft = _nft;
-        admin = msg.sender;
     }
 
     function list(uint256 tokenId, uint256 price) external {
@@ -43,7 +41,8 @@ contract NFTMarket {
     }
 
     function permitBuy(
-        address buyer,
+        address owner,
+        address spender,
         uint256 tokenId,
         uint256 price,
         uint256 deadline,
@@ -57,8 +56,9 @@ contract NFTMarket {
         // 构建用于验证白名单的结构哈希
         bytes32 structHash = keccak256(
             abi.encode(
-                keccak256("Permit(address buyer,uint256 tokenId,uint256 price,uint256 deadline)"),
-                buyer,
+                keccak256("Permit(address owner,address spender,uint256 tokenId,uint256 price,uint256 deadline)"),
+                owner,
+                spender,
                 tokenId,
                 price,
                 deadline
@@ -68,7 +68,7 @@ contract NFTMarket {
         address signer = ECDSA.recover(structHash, v, r, s);
 
         // 从签名和消息计算 signer，并验证签名
-        require(signer == admin, "Invalid whitelist signature");
+        require(signer == owner, "Invalid whitelist signature");
 
         buyNFT(tokenId);
     }

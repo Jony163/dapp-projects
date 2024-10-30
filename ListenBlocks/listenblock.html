@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ethereum Block Listener</title>
+</head>
+<body>
+  <h1>Ethereum Block Listener</h1>
+  <div id="block-info">
+    <p>Block Number: <span id="block-number">-</span></p>
+    <p>Block Hash: <span id="block-hash">-</span></p>
+  </div>
+
+  <!-- 引入 Ethers 和 Viem 库的 CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/viem@latest"></script> -->
+
+
+  <script type="module">
+    // 导入 viem 的 createPublicClient 和 websocket 工具
+    import { createPublicClient, websocket, mainnet } from 'https://esm.sh/viem';
+
+    
+    // 配置 WebSocket 连接
+    const client = createPublicClient({
+      chain: mainnet,
+      transport: websocket("wss://mainnet.infura.io/ws/v3/5a6c493631254edaa4011e43e3c879f9") // 替换为您的 Infura 项目 ID
+    });
+
+    // 监听新区块生成
+    client.watchBlocks({
+      onBlock: (block) => {
+        // 打印区块高度和哈希值
+        document.getElementById('output').innerText = `New block info!\nHeight: ${block.number}\nHash: ${block.hash}`;
+      },
+    });
+  </script>
+</body>
+</html>

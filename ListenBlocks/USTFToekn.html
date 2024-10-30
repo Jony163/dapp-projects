@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USDT Transfer Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.0/dist/ethers.umd.min.js"></script>
+</head>
+<body>
+    <h1>USDT Transfer Tracker</h1>
+    <pre id="output">Waiting for USDT transfers...</pre>
+
+    <script>
+        // USDT 合约地址
+        const USDT_ADDRESS = "0xdac17f958d2ee523a2206206994597c13d831ec7";
+        // USDT ABI，仅包含 Transfer 事件
+        const USDT_ABI = [
+            "event Transfer(address indexed from, address indexed to, uint256 value)"
+        ];
+
+        async function main() {
+            // 创建 WebSocket 提供者，连接到以太坊节点（请使用有效的节点地址）
+            const provider = new ethers.providers.WebSocketProvider('wss://ethereum-rpc.publicnode.com');
+
+            // 创建合约实例
+            const usdtContract = new ethers.Contract(USDT_ADDRESS, USDT_ABI, provider);
+
+            // 监听 Transfer 事件
+            usdtContract.on("Transfer", (from, to, value, event) => {
+                const transactionHash = event.transactionHash;
+                const blockNumber = event.blockNumber;
+
+                // 打印转账信息
+                const output = document.getElementById('output');
+                output.innerText += `\n\nBlock: ${blockNumber} (${transactionHash})\n` +
+                    `From: ${from}\n` +
+                    `To: ${to}\n` +
+                    `Amount: ${ethers.utils.formatUnits(value, 6)} USDT`; // USDT 有 6 位小数
+            });
+        }
+
+        // 调用主函数
+        main().catch(console.error);
+    </script>
+</body>
+</html>

